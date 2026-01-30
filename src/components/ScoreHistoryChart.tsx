@@ -30,7 +30,7 @@ export function ScoreHistoryChart({ data, categories = [] }: ScoreHistoryChartPr
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-             <CartesianGrid strokeDasharray="3 3" />
+             <CartesianGrid strokeDasharray="2 2" />
             <XAxis 
               dataKey="date" 
               stroke="#a6adc8"
@@ -44,9 +44,17 @@ export function ScoreHistoryChart({ data, categories = [] }: ScoreHistoryChartPr
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => `${value}`}
-              domain={[0, 5.5]} // Max 5, but slight buffer for visuals
+              domain={[0, 5]}
+              ticks={[0, 1, 2, 3, 4, 5]}
             />
-            <Tooltip />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#101010",
+                borderColor: "#3d3d3d",
+                color: "#cdd6f4",
+                borderRadius: "8px",
+              }}
+            />
             <Legend />
             
             {/* Main Total Score */}

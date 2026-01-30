@@ -146,3 +146,8 @@
   --sidebar-border: 237 16% 23%;
   --sidebar-ring: 231 97% 85%;
 }
+
+
+svg:focus {
+  outline: none;
+}
