@@ -27,10 +27,10 @@ export function Search({ tableBodyRef }: SearchProps) {
   }
 
   return (
-    <InputGroup className="mb-4 max-w-sm border-none">
-      <InputGroupInput placeholder="Search..." onChange={handleSearch} />
+    <InputGroup className="mb-4 w-full border-none">
+      <InputGroupInput accessKey="s" placeholder="Search..." onChange={handleSearch} />
       <InputGroupAddon>
-        <SearchIcon />
+      <SearchIcon />
       </InputGroupAddon>
     </InputGroup>
   );
