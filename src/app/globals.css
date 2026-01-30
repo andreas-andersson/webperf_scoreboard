@@ -81,7 +81,7 @@
   --destructive-foreground: 240 23% 9%;
 
   /* Surface0 (darker): #313244 -> 237 16% 23% */
-  --border: 237 16% 23%;
+  --border: rgba(255,255,255,0.1);
   --input: 237 16% 23%;
 
   /* Lavender: #b4befe -> 231 97% 85% */
@@ -129,7 +129,7 @@
   --accent-foreground: 226 64% 88%;
   --destructive: 343 81% 75%;
   --destructive-foreground: 240 23% 9%;
-  --border: 237 16% 23%;
+  --border: rgba(255,255,255,0.1);
   --input: 237 16% 23%;
   --ring: 231 97% 85%;
   --chart-1: 217 92% 76%;

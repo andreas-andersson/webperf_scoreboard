@@ -23,7 +23,7 @@ const COLORS = [
 
 export function ScoreHistoryChart({ data, categories = [] }: ScoreHistoryChartProps) {
   return (
-    <Card>
+    <Card className="border-border">
       <CardHeader>
         <CardTitle>Score History</CardTitle>
       </CardHeader>
