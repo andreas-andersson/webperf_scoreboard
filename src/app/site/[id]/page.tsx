@@ -89,8 +89,7 @@ export default async function SiteDetailsPage({ params }: { params: Promise<{ id
 
       <ScoreHistoryChart data={chartData} categories={categoryNames} />
 
-      {/* Tests Breakdown - Latest Scan */}
-      {tableData.length > 0 && tableData[0].testsData && (
+      {tableData.length > 0 && tableData[0].testsData as Record<string, number> && (
          <Card className="border-border/50">
             <CardHeader>
                 <CardTitle className="font-mono uppercase tracking-tight">Latest Test Results</CardTitle>
@@ -130,15 +129,15 @@ export default async function SiteDetailsPage({ params }: { params: Promise<{ id
                                 {new Date(scan.scannedAt).toISOString().split('T')[0]}
                             </TableCell>
                             <TableCell>
-                                <Badge className={`font-mono rounded-none border-0 ${getScoreColor(scan.totalScore)} text-white`}>
+                                <Badge className={`font-mono rounded-none border-0 ${getScoreColor(scan.totalScore)}`}>
                                     {scan.totalScore?.toFixed(2)}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-xs text-muted-foreground">
                                 <div className="flex flex-wrap gap-2">
-                                     {scan.categories && Object.entries(scan.categories as Record<string, number>).map(([k, v]) => (
+                                     {Object.entries((scan.categories as Record<string, number>) || {}).map(([k, v]) => (
                                          <span key={k} className="font-mono border border-border px-2 py-0.5 text-[10px] uppercase">
-                                             {k}: <span className={v >= 4 ? 'text-green-500' : v >= 2.5 ? 'text-orange-500' : 'text-red-500'}>{v.toFixed(1)}</span>
+                                             {k}: <span className={v >= 4 ? 'text-[#a6e3a1]' : v >= 2.5 ? 'text-[#fab387]' : 'text-[#f38ba8]'}>{v.toFixed(1)}</span>
                                          </span>
                                      ))}
                                 </div>
