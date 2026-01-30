@@ -1,26 +1,148 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* Catppuccin Mocha Palette */
+  /* https://catppuccin.com/palette */
+  
+  /* Base: #1e1e2e -> HSL: 240 21% 15% */
+  --background: 240 21% 15%;
+  
+  /* Text: #cdd6f4 -> HSL: 226 64% 88% */
+  --foreground: 226 64% 88%;
+
+  /* Mantle: #181825 -> 240 21% 12% */
+  --card: 240 21% 12%; 
+  --card-foreground: 226 64% 88%;
+
+  --popover: 240 21% 12%;
+  --popover-foreground: 226 64% 88%;
+
+  /* Mauve: #cba6f7 -> 267 84% 81% */
+  --primary: 267 84% 81%;
+  /* Crust: #11111b -> 240 23% 9% */
+  --primary-foreground: 240 23% 9%;
+
+  /* Surface0: #313244 -> 237 16% 23% */
+  --secondary: 237 16% 23%;
+  --secondary-foreground: 226 64% 88%;
+
+  --muted: 237 16% 23%;
+  /* Subtext0: #a6adc8 -> 228 24% 72% */
+  --muted-foreground: 228 24% 72%;
+
+  /* Overlay0: #6c7086 (Used for accents in some contexts, but mapping Accent to Surface0/Overlay here for UI components) */
+  --accent: 237 16% 23%;
+  --accent-foreground: 226 64% 88%;
+
+  /* Red: #f38ba8 -> 343 81% 75% */
+  --destructive: 343 81% 75%;
+  --destructive-foreground: 240 23% 9%;
+
+  /* Surface0 (darker): #313244 -> 237 16% 23% */
+  --border: 237 16% 23%;
+  --input: 237 16% 23%;
+
+  /* Lavender: #b4befe -> 231 97% 85% */
+  --ring: 231 97% 85%;
+
+  --radius: 0.1rem;
+
+  /* Chart Colors (Catppuccin) */
+  /* Blue: #89b4fa */
+  --chart-1: 217 92% 76%;
+  /* Green: #a6e3a1 */
+  --chart-2: 115 54% 76%;
+  /* Yellow: #f9e2af */
+  --chart-3: 41 86% 83%;
+  /* Peach: #fab387 */
+  --chart-4: 23 93% 75%;
+  /* Red: #f38ba8 */
+  --chart-5: 343 81% 75%;
+
+  --sidebar: 240 21% 15%;
+  --sidebar-foreground: 226 64% 88%;
+  --sidebar-primary: 267 84% 81%;
+  --sidebar-primary-foreground: 240 23% 9%;
+  --sidebar-accent: 237 16% 23%;
+  --sidebar-accent-foreground: 226 64% 88%;
+  --sidebar-border: 237 16% 23%;
+  --sidebar-ring: 231 97% 85%;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.dark {
+  /* Identical to root for forced dark mode */
+  --background: 240 21% 15%;
+  --foreground: 226 64% 88%;
+  --card: 240 21% 12%; 
+  --card-foreground: 226 64% 88%;
+  --popover: 240 21% 12%;
+  --popover-foreground: 226 64% 88%;
+  --primary: 267 84% 81%;
+  --primary-foreground: 240 23% 9%;
+  --secondary: 237 16% 23%;
+  --secondary-foreground: 226 64% 88%;
+  --muted: 237 16% 23%;
+  --muted-foreground: 228 24% 72%;
+  --accent: 237 16% 23%;
+  --accent-foreground: 226 64% 88%;
+  --destructive: 343 81% 75%;
+  --destructive-foreground: 240 23% 9%;
+  --border: 237 16% 23%;
+  --input: 237 16% 23%;
+  --ring: 231 97% 85%;
+  --chart-1: 217 92% 76%;
+  --chart-2: 115 54% 76%;
+  --chart-3: 41 86% 83%;
+  --chart-4: 23 93% 75%;
+  --chart-5: 343 81% 75%;
+  --sidebar: 240 21% 15%;
+  --sidebar-foreground: 226 64% 88%;
+  --sidebar-primary: 267 84% 81%;
+  --sidebar-primary-foreground: 240 23% 9%;
+  --sidebar-accent: 237 16% 23%;
+  --sidebar-accent-foreground: 226 64% 88%;
+  --sidebar-border: 237 16% 23%;
+  --sidebar-ring: 231 97% 85%;
 }
