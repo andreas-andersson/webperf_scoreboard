@@ -14,18 +14,28 @@ export const dynamic = "force-dynamic"; // Ensure we get fresh data
 export default async function Home() {
   // CTE to calculate ranks per week
   const leaderboardQuery = sql`
-    WITH weekly_ranks AS (
-        SELECT 
+    WITH unique_weekly_scans AS (
+        SELECT DISTINCT ON (scans.site_id, date_trunc('week', scans.scanned_at))
             scans.id,
             scans.site_id,
             scans.total_score,
             scans.scanned_at,
-            RANK() OVER (
-                PARTITION BY date_trunc('week', scans.scanned_at) 
-                ORDER BY scans.total_score DESC NULLS LAST
-            ) as current_rank,
             date_trunc('week', scans.scanned_at) as scan_week
         FROM ${scans}
+        ORDER BY scans.site_id, date_trunc('week', scans.scanned_at), scans.scanned_at DESC
+    ),
+    weekly_ranks AS (
+        SELECT 
+            id,
+            site_id,
+            total_score,
+            scanned_at,
+            scan_week,
+            RANK() OVER (
+                PARTITION BY scan_week 
+                ORDER BY total_score DESC NULLS LAST
+            ) as current_rank
+        FROM unique_weekly_scans
     ),
     latest_scan_date AS (
          SELECT MAX(scan_week) as max_week FROM weekly_ranks
