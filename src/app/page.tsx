@@ -4,9 +4,7 @@ import { sql } from "drizzle-orm";
 import { Leaderboard } from "@/components/Leaderboard";
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
+  CardContent
 } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic"; // Ensure we get fresh data

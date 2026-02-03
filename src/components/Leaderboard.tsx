@@ -9,24 +9,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowUp, ArrowDown, Minus } from "lucide-react";
 import { useRef } from "react";
 import { Search } from "@/components/Search";
-
-function getScoreColor(score: number | null) {
-  if (score === null) return "bg-[#6c7086] hover:bg-[#585b70]"; // Overlay0
-  if (score >= 4.0) return "bg-[#a6e3a1] hover:bg-[#94e2d5] text-[#1e1e2e]"; // Green -> Teal hover
-  if (score >= 2.5) return "bg-[#fab387] hover:bg-[#f9e2af] text-[#1e1e2e]"; // Peach -> Yellow hover
-  return "bg-[#f38ba8] hover:bg-[#eba0ac] text-[#1e1e2e]"; // Red -> Maroonish hover
-}
+import { getScoreColor } from "@/lib/ratingColors";
 
 function TrendIndicator({ trend }: { trend: number }) {
   if (trend > 0) {

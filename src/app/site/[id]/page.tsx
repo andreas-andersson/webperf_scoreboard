@@ -13,15 +13,9 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getScoreColor } from "@/lib/ratingColors";
 
 export const dynamic = "force-dynamic";
-
-function getScoreColor(score: number | null) {
-  if (score === null) return "bg-[#6c7086]"; // Overlay0
-  if (score >= 4.0) return "bg-[#a6e3a1] text-[#1e1e2e]"; // Green (with dark text for contrast)
-  if (score >= 2.5) return "bg-[#fab387] text-[#1e1e2e]"; // Peach
-  return "bg-[#f38ba8] text-[#1e1e2e]"; // Red
-}
 
 export default async function SiteDetailsPage({
   params,
