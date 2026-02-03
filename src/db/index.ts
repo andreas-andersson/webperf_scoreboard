@@ -1,13 +1,17 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
-import pg from 'pg';
+import { boolean, jsonb, pgTable, serial, text, timestamp, withReplicas } from 'drizzle-orm/pg-core';
 import * as schema from './schema';
 
-if (!process.env.DB_CONNECTION_STRING) {
-  throw new Error('DB_CONNECTION_STRING is missing');
+if (
+  !process.env.DB_CONNECTION_STRING ||
+  !process.env.DB_CONNECTION_READ1 ||
+  !process.env.DB_CONNECTION_READ2
+) {
+  throw new Error('DB_CONNECTION_STRING or DB_CONNECTION_READ1 or DB_CONNECTION_READ2 is missing');
 }
 
-const pool = new pg.Pool({
-  connectionString: process.env.DB_CONNECTION_STRING,
-});
+const primary = drizzle(process.env.DB_CONNECTION_STRING, { schema });
+const read1 = drizzle(process.env.DB_CONNECTION_READ1, { schema });
+const read2 = drizzle(process.env.DB_CONNECTION_READ2, { schema });
 
-export const db = drizzle(pool, { schema });
+export const db = withReplicas(primary, [read1, read2]);
