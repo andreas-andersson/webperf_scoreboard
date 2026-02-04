@@ -47,104 +47,104 @@
   /* https://catppuccin.com/palette */
   
   /* Base: #1e1e2e -> HSL: 240 21% 15% */
-  --background: 240 21% 15%;
+  --background: hsl(240 21% 15%);
   
   /* Text: #cdd6f4 -> HSL: 226 64% 88% */
-  --foreground: 226 64% 88%;
+  --foreground: hsl(226 64% 88%);
 
   /* Mantle: #181825 -> 240 21% 12% */
-  --card: 240 21% 12%; 
-  --card-foreground: 226 64% 88%;
+  --card: hsl(240 21% 12%); 
+  --card-foreground: hsl(226 64% 88%);
 
-  --popover: 240 21% 12%;
-  --popover-foreground: 226 64% 88%;
+  --popover: hsl(240 21% 12%);
+  --popover-foreground: hsl(226 64% 88%);
 
   /* Mauve: #cba6f7 -> 267 84% 81% */
-  --primary: 267 84% 81%;
+  --primary: hsl(267 84% 81%);
   /* Crust: #11111b -> 240 23% 9% */
-  --primary-foreground: 240 23% 9%;
+  --primary-foreground: hsl(240 23% 9%);
 
   /* Surface0: #313244 -> 237 16% 23% */
-  --secondary: 237 16% 23%;
-  --secondary-foreground: 226 64% 88%;
+  --secondary: hsl(237 16% 23%);
+  --secondary-foreground: hsl(226 64% 88%);
 
-  --muted: 237 16% 23%;
+  --muted: hsl(237 16% 23%);
   /* Subtext0: #a6adc8 -> 228 24% 72% */
-  --muted-foreground: 228 24% 72%;
+  --muted-foreground: hsl(228 24% 72%);
 
   /* Overlay0: #6c7086 (Used for accents in some contexts, but mapping Accent to Surface0/Overlay here for UI components) */
-  --accent: 237 16% 23%;
-  --accent-foreground: 226 64% 88%;
+  --accent: hsl(237 16% 23%);
+  --accent-foreground: hsl(226 64% 88%);
 
   /* Red: #f38ba8 -> 343 81% 75% */
-  --destructive: 343 81% 75%;
-  --destructive-foreground: 240 23% 9%;
+  --destructive: hsl(343 81% 75%);
+  --destructive-foreground: hsl(240 23% 9%);
 
   /* Surface0 (darker): #313244 -> 237 16% 23% */
   --border: rgba(255,255,255,0.1);
-  --input: 237 16% 23%;
+  --input: hsl(237 16% 23%);
 
   /* Lavender: #b4befe -> 231 97% 85% */
-  --ring: 231 97% 85%;
+  --ring: hsl(231 97% 85%);
 
   --radius: 0.1rem;
 
   /* Chart Colors (Catppuccin) */
   /* Blue: #89b4fa */
-  --chart-1: 217 92% 76%;
+  --chart-1: hsl(217 92% 76%);
   /* Green: #a6e3a1 */
-  --chart-2: 115 54% 76%;
+  --chart-2: hsl(115 54% 76%);
   /* Yellow: #f9e2af */
-  --chart-3: 41 86% 83%;
+  --chart-3: hsl(41 86% 83%);
   /* Peach: #fab387 */
-  --chart-4: 23 93% 75%;
+  --chart-4: hsl(23 93% 75%);
   /* Red: #f38ba8 */
-  --chart-5: 343 81% 75%;
+  --chart-5: hsl(343 81% 75%);
 
-  --sidebar: 240 21% 15%;
-  --sidebar-foreground: 226 64% 88%;
-  --sidebar-primary: 267 84% 81%;
-  --sidebar-primary-foreground: 240 23% 9%;
-  --sidebar-accent: 237 16% 23%;
-  --sidebar-accent-foreground: 226 64% 88%;
-  --sidebar-border: 237 16% 23%;
-  --sidebar-ring: 231 97% 85%;
+  --sidebar: hsl(240 21% 15%);
+  --sidebar-foreground: hsl(226 64% 88%);
+  --sidebar-primary: hsl(267 84% 81%);
+  --sidebar-primary-foreground: hsl(240 23% 9%);
+  --sidebar-accent: hsl(237 16% 23%);
+  --sidebar-accent-foreground: hsl(226 64% 88%);
+  --sidebar-border: hsl(237 16% 23%);
+  --sidebar-ring: hsl(231 97% 85%);
 }
 
 .dark {
   /* Identical to root for forced dark mode */
-  --background: 240 21% 15%;
-  --foreground: 226 64% 88%;
-  --card: 240 21% 12%; 
-  --card-foreground: 226 64% 88%;
-  --popover: 240 21% 12%;
-  --popover-foreground: 226 64% 88%;
-  --primary: 267 84% 81%;
-  --primary-foreground: 240 23% 9%;
-  --secondary: 237 16% 23%;
-  --secondary-foreground: 226 64% 88%;
-  --muted: 237 16% 23%;
-  --muted-foreground: 228 24% 72%;
-  --accent: 237 16% 23%;
-  --accent-foreground: 226 64% 88%;
-  --destructive: 343 81% 75%;
-  --destructive-foreground: 240 23% 9%;
+  --background: hsl(240 21% 15%);
+  --foreground: hsl(226 64% 88%);
+  --card: hsl(240 21% 12%); 
+  --card-foreground: hsl(226 64% 88%);
+  --popover: hsl(240 21% 12%);
+  --popover-foreground: hsl(226 64% 88%);
+  --primary: hsl(267 84% 81%);
+  --primary-foreground: hsl(240 23% 9%);
+  --secondary: hsl(237 16% 23%);
+  --secondary-foreground: hsl(226 64% 88%);
+  --muted: hsl(237 16% 23%);
+  --muted-foreground: hsl(228 24% 72%);
+  --accent: hsl(237 16% 23%);
+  --accent-foreground: hsl(226 64% 88%);
+  --destructive: hsl(343 81% 75%);
+  --destructive-foreground: hsl(240 23% 9%);
   --border: rgba(255,255,255,0.1);
-  --input: 237 16% 23%;
-  --ring: 231 97% 85%;
-  --chart-1: 217 92% 76%;
-  --chart-2: 115 54% 76%;
-  --chart-3: 41 86% 83%;
-  --chart-4: 23 93% 75%;
-  --chart-5: 343 81% 75%;
-  --sidebar: 240 21% 15%;
-  --sidebar-foreground: 226 64% 88%;
-  --sidebar-primary: 267 84% 81%;
-  --sidebar-primary-foreground: 240 23% 9%;
-  --sidebar-accent: 237 16% 23%;
-  --sidebar-accent-foreground: 226 64% 88%;
-  --sidebar-border: 237 16% 23%;
-  --sidebar-ring: 231 97% 85%;
+  --input: hsl(237 16% 23%);
+  --ring: hsl(231 97% 85%);
+  --chart-1: hsl(217 92% 76%);
+  --chart-2: hsl(115 54% 76%);
+  --chart-3: hsl(41 86% 83%);
+  --chart-4: hsl(23 93% 75%);
+  --chart-5: hsl(343 81% 75%);
+  --sidebar: hsl(240 21% 15%);
+  --sidebar-foreground: hsl(226 64% 88%);
+  --sidebar-primary: hsl(267 84% 81%);
+  --sidebar-primary-foreground: hsl(240 23% 9%);
+  --sidebar-accent: hsl(237 16% 23%);
+  --sidebar-accent-foreground: hsl(226 64% 88%);
+  --sidebar-border: hsl(237 16% 23%);
+  --sidebar-ring: hsl(231 97% 85%);
 }
 
 
