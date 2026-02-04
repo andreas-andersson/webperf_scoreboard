@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { useReplica } from "@/db";
 import { sites, scans } from "@/db/schema";
 import { sql } from "drizzle-orm";
 import { Leaderboard } from "@/components/Leaderboard";
@@ -65,7 +65,7 @@ export default async function Home() {
     ORDER BY current_stats.current_rank ASC
   `;
 
-  const result = await db.execute(leaderboardQuery);
+  const result = await useReplica().execute(leaderboardQuery);
 
   const leaderboard = result.rows.map((row: any) => ({
     id: row.id,
