@@ -58,11 +58,11 @@ export function Leaderboard({ leaderboard }: LeaderboardProps) {
         <TableHeader>
           <TableRow className="hover:bg-muted/50 border-border">
             <TableHead className="w-[80px]">RANK</TableHead>
-            <TableHead className="w-[80px]">TREND</TableHead>
+            <TableHead className="w-[80px] hidden sm:table-cell">TREND</TableHead>
             <TableHead>SITE NAME</TableHead>
-            <TableHead>URL</TableHead>
+            <TableHead className="hidden md:table-cell">URL</TableHead>
             <TableHead className="text-right">SCORE</TableHead>
-            <TableHead className="text-right">LAST SCANNED</TableHead>
+            <TableHead className="text-right hidden lg:table-cell">LAST SCANNED</TableHead>
             <TableHead className="text-right">ACTION</TableHead>
           </TableRow>
         </TableHeader>
@@ -83,11 +83,11 @@ export function Leaderboard({ leaderboard }: LeaderboardProps) {
               className="font-mono hover:bg-muted/30 border-border"
             >
               <TableCell className="font-medium">#{site.rank}</TableCell>
-              <TableCell>
+              <TableCell className="hidden sm:table-cell">
                 <TrendIndicator trend={site.rankChange} />
               </TableCell>
               <TableCell className="font-bold">{site.name}</TableCell>
-              <TableCell className="text-muted-foreground text-xs">
+              <TableCell className="text-muted-foreground text-xs hidden md:table-cell">
                 <a
                   href={
                     site.url.startsWith("http")
@@ -109,7 +109,7 @@ export function Leaderboard({ leaderboard }: LeaderboardProps) {
                   {site.totalScore?.toFixed(2) ?? "N/A"}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right text-xs text-muted-foreground">
+              <TableCell className="text-right text-xs text-muted-foreground hidden lg:table-cell">
                 {site.lastScanned !== "Never"
                   ? new Date(site.lastScanned).toISOString().split("T")[0]
                   : "NEVER"}
