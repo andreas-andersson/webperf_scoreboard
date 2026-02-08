@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { sites, scans } from "@/db/schema";
-import { eq, asc, desc } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import {
@@ -17,11 +17,7 @@ import { getScoreColor } from "@/lib/ratingColors";
 
 export const dynamic = "force-dynamic";
 
-export default async function SiteDetailsPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function SiteDetailsPage({params,}: {params: Promise<{ id: string }>;}) {
   const { id } = await params;
 
   const site = await db.query.sites.findFirst({
@@ -34,11 +30,18 @@ export default async function SiteDetailsPage({
 
   const history = await db.query.scans.findMany({
     where: eq(scans.siteId, id),
-    orderBy: [asc(scans.scannedAt)],
+    orderBy: [desc(scans.scannedAt)],
     limit: 52
   });
 
-  const categoriesCurrent = history[0]?.categories || {} as Record<string, number>;
+  // TODO: Render a no scan history state instead of 404
+  if (history.length === 0) {
+    notFound();
+  }
+
+  const currentScore = history[0];
+
+  const categoriesCurrent = currentScore?.categories as Record<string, number>;
 
   const allCategories = new Set<string>();
 
@@ -51,12 +54,12 @@ export default async function SiteDetailsPage({
       score: scan.totalScore || 0,
       ...categories,
     };
-  });
+  }).reverse(); // Reverse for chronological order
 
   const categoryNames = Array.from(allCategories);
 
   // Reverse for table view (newest first)
-  const tableData = [...history].reverse();
+  const tableData = [...history];
 
   return (
     <div className="container mx-auto py-10 px-4 space-y-8">
@@ -92,15 +95,11 @@ export default async function SiteDetailsPage({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold font-mono">
-              {history.length > 0 ? (
                 <Badge
-                  className={`text-lg px-3 py-1 ${getScoreColor(history[history.length - 1].totalScore)} rounded-none border-0`}
+                  className={`text-lg px-3 py-1 ${getScoreColor(currentScore.totalScore)} rounded-none border-0`}
                 >
-                  {history[history.length - 1].totalScore?.toFixed(2)}
+                  {currentScore.totalScore?.toFixed(2)}
                 </Badge>
-              ) : (
-                "N/A"
-              )}
             </div>
           </CardContent>
         </Card>
@@ -126,41 +125,38 @@ export default async function SiteDetailsPage({
         })}
       </div>
 
-      {tableData.length > 0 &&
-        (tableData[0].testsData as Record<string, number>) && (
-          <Card className="border-border">
-            <CardHeader>
-              <CardTitle className="font-mono uppercase tracking-tight">
-                Latest Test Results
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 font-mono text-sm">
-                {Object.entries(
-                  tableData[0].testsData as Record<string, any>,
-                ).map(([key, value]) => (
-                  <div
-                    key={key}
-                    className="flex justify-between items-center border-b border-border/40 pb-2"
-                  >
-                    <span className="text-muted-foreground">{key}</span>
-                    <span
-                      className={
-                        typeof value === "number"
-                          ? `font-bold ${value >= 4 ? "text-[#a6e3a1]" : value >= 2.5 ? "text-[#fab387]" : "text-[#f38ba8]"}`
-                          : ""
-                      }
-                    >
-                      {typeof value === "number"
-                        ? value.toFixed(2)
-                        : String(value)}
-                    </span>
-                  </div>
-                ))}
+      <Card className="border-border">
+        <CardHeader>
+          <CardTitle className="font-mono uppercase tracking-tight">
+            Latest Test Results
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 font-mono text-sm">
+            {Object.entries(
+              currentScore.testsData as Record<string, any>,
+            ).map(([key, value]) => (
+              <div
+                key={key}
+                className="flex justify-between items-center border-b border-border/40 pb-2"
+              >
+                <span className="text-muted-foreground">{key}</span>
+                <span
+                  className={
+                    typeof value === "number"
+                      ? `font-bold ${value >= 4 ? "text-[#a6e3a1]" : value >= 2.5 ? "text-[#fab387]" : "text-[#f38ba8]"}`
+                      : ""
+                  }
+                >
+                  {typeof value === "number"
+                    ? value.toFixed(2)
+                    : String(value)}
+                </span>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <ScoreHistoryChart data={chartData} categories={categoryNames} />
 
@@ -220,7 +216,7 @@ export default async function SiteDetailsPage({
                                   : "text-[#f38ba8]"
                             }
                           >
-                            {v.toFixed(1)}
+                            {v.toFixed(2)}
                           </span>
                         </span>
                       ))}
