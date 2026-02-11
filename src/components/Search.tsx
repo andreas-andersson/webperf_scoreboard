@@ -3,6 +3,7 @@
 import { SearchIcon } from "lucide-react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { RefObject, useEffect, useRef } from "react";
+import { Kbd } from "./ui/kbd";
 
 interface SearchProps {
   tableBodyRef?: RefObject<HTMLTableSectionElement | null>;
@@ -58,9 +59,12 @@ export function Search({ tableBodyRef }: SearchProps) {
 
   return (
     <InputGroup className="mb-4 w-full border-none">
-      <InputGroupInput ref={searchRef} type="search" accessKey="s" placeholder="Search..." onChange={handleSearch} />
+      <InputGroupInput ref={searchRef} type="search" placeholder="Search..." onChange={handleSearch} />
       <InputGroupAddon>
       <SearchIcon />
+      </InputGroupAddon>
+      <InputGroupAddon align="inline-end">
+        <Kbd>/</Kbd>
       </InputGroupAddon>
     </InputGroup>
   );
