@@ -4,7 +4,7 @@ import { LeaderboardLoader } from "@/components/LeaderboardLoader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 function LeaderboardSkeleton() {
   return (
