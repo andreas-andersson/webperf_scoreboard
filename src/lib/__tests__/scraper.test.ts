@@ -24,11 +24,20 @@
 import { describe, it, expect } from 'vitest'
 import { scrapeScoreboard, scrapeSiteDetails } from '../scraper'
 
+function testUrl(url: string) {
+  try {
+    new URL(url)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
 describe('scrapeScoreboard()',  async () => {
   const results = await scrapeScoreboard()
 
   it('returns a list of sites', () => {
-    expect(results.length).toBeGreaterThan(280)
+    expect(results.length).toBeGreaterThanOrEqual(290)
   })
 
   it('each site has a non-empty name', () => {
@@ -51,10 +60,20 @@ describe('scrapeSiteDetails()', async () => {
   it('returns a url string', () => {
     expect(typeof result.url).toBe('string')
     expect(result.url.length).toBeGreaterThan(0)
+    expect(testUrl(result.url)).toBe(true)
   })
 
-  it('returns a non-empty categories object with numeric scores', () => {
-    expect(Object.keys(result.categories).length).toBeGreaterThanOrEqual(4)
+  it('returns a categories object with numeric scores', () => {
+    expect(Object.keys(result.categories).length).toEqual(4)
+
+    const categoryNames = Object.keys(result.categories)
+    const expectedCategories = ['Tillgänglighet', 'Hastighet', 'Webbstandard', 'Integritet & säkerhet']
+
+    categoryNames.forEach(name => {
+      // console.log(name);
+      expect(expectedCategories.includes(name)).toBe(true)
+    });
+
     for (const score of Object.values(result.categories)) {
       expect(typeof score).toBe('number')
       expect(score).toBeGreaterThanOrEqual(0)
@@ -63,7 +82,31 @@ describe('scrapeSiteDetails()', async () => {
   })
 
   it('returns a non-empty testsData object with numeric scores', () => {
-    expect(Object.keys(result.testsData).length).toBeGreaterThanOrEqual(15)
+    expect(Object.keys(result.testsData).length).toEqual(16)
+    const expectedTests = [
+      'HTTP & tekniktest',
+      'Webbprestanda enligt Sitespeed.io',
+      'Mjukvara',
+      'E-post',
+      'Spårning och integritet',
+      'HTTP statuskod 404',
+      'Energieffektivitet',
+      'Standardfiler',
+      'Tillgänglighet enligt Pa11y',
+      'HTML',
+      'CSS',
+      'Integritetstest med Webbkoll',
+      'Sökmotoroptimering (SEO) enligt Google Lighthouse',
+      'Följs praxis enligt Google Lighthouse',
+      'Webbprestanda enligt Google Lighthouse',
+      'Tillgänglighet enligt Axe'
+    ]
+    const testNames = Object.keys(result.testsData)
+    testNames.forEach(name => {
+      // console.log(name);
+      expect( expectedTests.includes(name)).toBe(true)
+    })
+
     for (const score of Object.values(result.testsData)) {
       expect(typeof score).toBe('number')
       expect(score).toBeGreaterThanOrEqual(0)
