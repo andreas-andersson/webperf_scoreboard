@@ -64,7 +64,7 @@ export async function LeaderboardLoader() {
     url: row.url,
     totalScore: row.total_score,
     lastScanned: row.scanned_at
-      ? new Date(row.scanned_at).toLocaleDateString()
+      ? new Date(row.scanned_at).toISOString()
       : "Never",
     rank: Number(row.current_rank),
     rankChange: row.rank_change ? Number(row.rank_change) : 0,

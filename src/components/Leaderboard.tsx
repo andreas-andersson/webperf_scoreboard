@@ -111,7 +111,7 @@ export function Leaderboard({ leaderboard }: LeaderboardProps) {
               </TableCell>
               <TableCell className="text-right text-xs text-muted-foreground hidden lg:table-cell">
                 {site.lastScanned !== "Never"
-                  ? new Date(site.lastScanned).toISOString().split("T")[0]
+                  ? site.lastScanned.split("T")[0]
                   : "NEVER"}
               </TableCell>
               <TableCell className="text-right text-xs">
