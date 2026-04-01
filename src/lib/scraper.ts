@@ -28,7 +28,7 @@ export async function scrapeScoreboard() {
 
   // TODO: Update these selectors based on the actual HTML structure of the target site
   // This is a hypothetical example
-  $('main#content table.table tbody tr').each((_, element) => {
+  $('main #table_top table tbody tr').each((_, element) => {
     const linkEl = $(element).find('a');
     const name = linkEl.text().trim();
     const detailsUrl = linkEl.attr('href') || '';
@@ -56,11 +56,11 @@ export async function scrapeSiteDetails(detailsUrl: string) {
     /**
      * Find the category scores table and extract scores and the site url
      */
-    const rows = $('main#content table.table tbody tr');
-    const url = rows.find('td').eq(0).text().trim();
+    const rows = $('main#main-content table tbody tr');
+    const url = rows.eq(0).find('td a').attr('href') || rows.eq(0).find('td').text().trim();
 
-    const catStartIndex = 4;
-    const catEndIndex = rows.length - 1;
+    const catStartIndex = 3;
+    const catEndIndex = rows.length;
 
     const categories: Record<string, number> = {};
     const testsData: Record<string, number> = {};
@@ -76,9 +76,9 @@ export async function scrapeSiteDetails(detailsUrl: string) {
     /**
      * Find individual test results
      */
-    $('main#content ol.linklist li').each((_, element) => {
+    $('main#main-content nav.nav-toc ol li').each((_, element) => {
         const testName = $(element).find('a').text().trim();
-        const testResultText = $(element).find('span').text().trim();
+        const testResultText = $(element).find('small').text().trim();
         const testResult = scoreTextToFloat(testResultText);
 
         testsData[testName] = testResult;
