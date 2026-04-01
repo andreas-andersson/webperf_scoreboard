@@ -41,13 +41,14 @@ export async function GET(request: Request) {
             }
 
             let siteId: string;
-            const existingSite = await db.select().from(sites).where(eq(sites.url, siteData.url)).limit(1);
+            const urlWithoutProtocol = siteData.url.replace(/^https?:\/\//, '');
+            const existingSite = await db.select().from(sites).where(eq(sites.url, urlWithoutProtocol)).limit(1);
 
             if (existingSite.length > 0) {
                 siteId = existingSite[0].id;
             } else {
                 const insertResult = await db.insert(sites).values({
-                    url: siteData.url || '',
+                    url: urlWithoutProtocol || '',
                     name: siteData.name,
                 }).returning({ id: sites.id });
                 siteId = insertResult[0].id;
