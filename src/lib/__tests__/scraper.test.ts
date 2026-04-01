@@ -4,26 +4,14 @@
  * @description Tests for scraping scoreboard and site details from a web performance scoreboard
  */
 
-/**
- * Tests for scrapeScoreboard function
- * Verifies that the function correctly scrapes a list of sites from the scoreboard
- */
-
-/**
- * Tests for scrapeSiteDetails function
- * Verifies that the function correctly extracts detailed information about a specific site
- */
-
-/**
- * Timeout value in milliseconds for async test operations
- * @constant {number} 30_000
- * @description Set to 30 seconds (30,000 ms) to allow sufficient time for network requests
- * and DOM parsing operations during web scraping tests. This is necessary because web scraping
- * can be slower than typical unit tests due to network latency and page load times.
- */
 import { describe, it, expect } from 'vitest'
 import { scrapeScoreboard, scrapeSiteDetails } from '../scraper'
 
+/**
+ *  Test a string to see if it is a valid URL
+ * @param url - The URL string to test
+ * @returns boolean
+ */
 function testUrl(url: string) {
   try {
     new URL(url)
@@ -33,6 +21,11 @@ function testUrl(url: string) {
   }
 }
 
+
+/**
+ * Tests for Scoreboard Scraper
+ * @description Tests for the scrapeScoreboard function
+ */
 describe('scrapeScoreboard()',  async () => {
   const results = await scrapeScoreboard()
 
@@ -54,10 +47,14 @@ describe('scrapeScoreboard()',  async () => {
   })
 })
 
+/**
+ * Tests for Site Details Scraper
+ * @description Tests for the scrapeSiteDetails function
+ */
 describe('scrapeSiteDetails()', async () => {
   const result = await scrapeSiteDetails(process.env.TARGET_SITE_URL!)
 
-  it('returns a url string', () => {
+  it('returns a valid url string', () => {
     expect(typeof result.url).toBe('string')
     expect(result.url.length).toBeGreaterThan(0)
     expect(testUrl(result.url)).toBe(true)
