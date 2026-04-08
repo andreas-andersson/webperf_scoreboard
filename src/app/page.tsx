@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { ArrowUpRight } from "lucide-react";
 import { LeaderboardLoader } from "@/components/LeaderboardLoader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,7 +16,12 @@ function LeaderboardSkeleton() {
   );
 }
 
-export default async function Home() {
+async function DynamicLeaderboard() {
+  await connection();
+  return <LeaderboardLoader />;
+}
+
+export default function Home() {
   return (
     <main className="container mx-auto py-10 px-4">
       <div className="flex flex-col sm:flex-row sm:items-end mb-6 gap-4">
@@ -42,7 +48,7 @@ export default async function Home() {
       <Card className="border-border">
         <CardContent>
           <Suspense fallback={<LeaderboardSkeleton />}>
-            <LeaderboardLoader />
+            <DynamicLeaderboard />
           </Suspense>
         </CardContent>
       </Card>

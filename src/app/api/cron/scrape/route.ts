@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
+import { connection } from 'next/server';
 import { db } from '@/db';
 import { sites, scans } from '@/db/schema';
 import { scrapeScoreboard, scrapeSiteDetails } from '@/lib/scraper';
 import { eq } from 'drizzle-orm';
 
 export const maxDuration = 300; // Allow 5 minutes for scraping if there are many sites
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+    await connection();
     try {
         // Basic auth check for cron (optional but recommended)
         const authHeader = request.headers.get('authorization');

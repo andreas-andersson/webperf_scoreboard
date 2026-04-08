@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { db } from "@/db";
 import { sites, scans } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -16,27 +17,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getScoreColor } from "@/lib/ratingColors";
 import { cacheLife } from "next/cache";
 
-export const dynamic = "force-dynamic";
-
-export default async function SiteDetailsPage({params,}: {params: Promise<{ id: string }>;}) {
+async function getSiteData(id: string) {
   "use cache";
   cacheLife("hours");
-
-  const { id } = await params;
 
   const site = await db.query.sites.findFirst({
     where: eq(sites.id, id),
   });
 
-  if (!site) {
-    notFound();
-  }
-
   const history = await db.query.scans.findMany({
     where: eq(scans.siteId, id),
     orderBy: [desc(scans.scannedAt)],
-    limit: 52
+    limit: 52,
   });
+
+  return { site, history };
+}
+
+async function SiteDetailsContent({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const { site, history } = await getSiteData(id);
+
+  if (!site) {
+    notFound();
+  }
 
   // TODO: Render a no scan history state instead of 404
   if (history.length === 0) {
@@ -44,25 +48,20 @@ export default async function SiteDetailsPage({params,}: {params: Promise<{ id: 
   }
 
   const currentScore = history[0];
-
   const categoriesCurrent = currentScore?.categories as Record<string, number>;
-
   const allCategories = new Set<string>();
 
   const chartData = history.map((scan) => {
     const categories = (scan.categories as Record<string, number>) || {};
     Object.keys(categories).forEach((k) => allCategories.add(k));
-
     return {
       date: new Date(scan.scannedAt).toISOString().split("T")[0],
       score: scan.totalScore || 0,
       ...categories,
     };
-  }).reverse(); // Reverse for chronological order
+  }).reverse();
 
   const categoryNames = Array.from(allCategories);
-
-  // Reverse for table view (newest first)
   const tableData = [...history];
 
   return (
@@ -233,5 +232,13 @@ export default async function SiteDetailsPage({params,}: {params: Promise<{ id: 
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function SiteDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense>
+      <SiteDetailsContent params={params} />
+    </Suspense>
   );
 }
