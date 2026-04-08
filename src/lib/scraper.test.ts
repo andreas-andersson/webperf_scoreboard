@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { scrapeScoreboard, scrapeSiteDetails } from '../scraper'
+import { scrapeScoreboard, scrapeSiteDetails } from './scraper'
 
 /**
  *  Test a string to see if it is a valid URL
