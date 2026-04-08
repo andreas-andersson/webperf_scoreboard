@@ -4,8 +4,6 @@ import { LeaderboardLoader } from "@/components/LeaderboardLoader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// export const dynamic = "force-dynamic";
-
 function LeaderboardSkeleton() {
   return (
     <div className="space-y-2 pt-2">
@@ -17,7 +15,7 @@ function LeaderboardSkeleton() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
   return (
     <main className="container mx-auto py-10 px-4">
       <div className="flex flex-col sm:flex-row sm:items-end mb-6 gap-4">

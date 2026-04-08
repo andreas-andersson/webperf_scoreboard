@@ -14,10 +14,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getScoreColor } from "@/lib/ratingColors";
+import { cacheLife } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
 export default async function SiteDetailsPage({params,}: {params: Promise<{ id: string }>;}) {
+  "use cache";
+  cacheLife("hours");
+
   const { id } = await params;
 
   const site = await db.query.sites.findFirst({

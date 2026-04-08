@@ -2,8 +2,12 @@ import { sql } from "drizzle-orm";
 import { useReplica } from "@/db";
 import { sites, scans } from "@/db/schema";
 import { Leaderboard } from "@/components/Leaderboard";
+import { cacheLife } from "next/cache";
 
 export async function LeaderboardLoader() {
+  "use cache";
+  cacheLife("hours");
+
   const leaderboardQuery = sql`
     WITH unique_weekly_scans AS (
         SELECT DISTINCT ON (scans.site_id, date_trunc('week', scans.scanned_at))
