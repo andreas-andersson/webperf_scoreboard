@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ScoreCard } from "@/components/ScoreCard";
@@ -8,6 +7,7 @@ import { ScanHistoryTable } from "@/components/ScanHistoryTable";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { getSiteWithHistory } from "@/lib/site.service";
 import { cacheLife } from "next/cache";
+import PageSkeleton from "./components/skeleton";
 
 async function getSiteData(id: string) {
   "use cache";
@@ -52,7 +52,7 @@ async function SiteDetailsContent({ params }: { params: Promise<{ id: string }> 
   const testsKeyNames = Array.from(allTestsKeys);
 
   return (
-    <div className="container mx-auto py-10 px-4 space-y-8">
+    <>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold font-mono tracking-tight uppercase">
@@ -93,26 +93,17 @@ async function SiteDetailsContent({ params }: { params: Promise<{ id: string }> 
       />
 
       <ScanHistoryTable history={history} />
-    </div>
+    </>
   );
 }
 
-function SiteDetailsSkeleton() {
-  return (
-    <div className="space-y-4">
-      <Skeleton className="h-8 w-64" />
-      <Skeleton className="h-48 w-full" />
-      <Skeleton className="h-6 w-full" />
-      <Skeleton className="h-6 w-full" />
-      <Skeleton className="h-6 w-full" />
-    </div>
-  );
-}
 
 export default function SiteDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   return (
-    <Suspense fallback={<SiteDetailsSkeleton />}>
-      <SiteDetailsContent params={params} />
-    </Suspense>
+    <div className="container mx-auto py-10 px-4 space-y-8">
+      <Suspense fallback={<PageSkeleton />}>
+        <SiteDetailsContent params={params} />
+      </Suspense>
+    </div>
   );
 }
