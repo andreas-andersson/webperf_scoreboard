@@ -37,7 +37,7 @@ function TrendIndicator({ trend }: { trend: number }) {
 
 interface LeaderboardProps {
   leaderboard: {
-    id: number;
+    id: string;
     name: string;
     url: string;
     totalScore: number | null;
