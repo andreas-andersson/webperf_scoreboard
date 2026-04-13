@@ -11,28 +11,28 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowUp, ArrowDown, Minus } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Search } from "@/components/Search";
 import { getScoreColor } from "@/lib/ratingColors";
 
 function TrendIndicator({ trend }: { trend: number }) {
   if (trend > 0) {
     return (
-      <div className="flex items-center text-[#a6e3a1] gap-1">
-        <ArrowUp className="h-4 w-4" />
+      <div className="flex items-center text-[#a6e3a1] gap-1" aria-label={`Rank up ${trend}`}>
+        <ArrowUp className="h-4 w-4" aria-hidden="true" />
         <span>{trend}</span>
       </div>
     );
   }
   if (trend < 0) {
     return (
-      <div className="flex items-center text-[#f38ba8] gap-1">
-        <ArrowDown className="h-4 w-4" />
+      <div className="flex items-center text-[#f38ba8] gap-1" aria-label={`Rank down ${Math.abs(trend)}`}>
+        <ArrowDown className="h-4 w-4" aria-hidden="true" />
         <span>{Math.abs(trend)}</span>
       </div>
     );
   }
-  return <Minus className="h-4 w-4 text-[#a6adc8]" />;
+  return <Minus className="h-4 w-4 text-[#a6adc8]" aria-label="No change" />;
 }
 
 interface LeaderboardProps {
@@ -49,10 +49,15 @@ interface LeaderboardProps {
 
 export function Leaderboard({ leaderboard }: LeaderboardProps) {
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const [noResults, setNoResults] = useState(false);
+
+  function handleSearchChange(hasResults: boolean) {
+    setNoResults(!hasResults);
+  }
 
   return (
     <>
-      <Search tableBodyRef={tableBodyRef} />
+      <Search tableBodyRef={tableBodyRef} onResultsChange={handleSearchChange} />
 
       <Table>
         <TableHeader>
@@ -67,13 +72,13 @@ export function Leaderboard({ leaderboard }: LeaderboardProps) {
           </TableRow>
         </TableHeader>
         <TableBody ref={tableBodyRef}>
-          {leaderboard.length === 0 && (
+          {(leaderboard.length === 0 || noResults) && (
             <TableRow>
               <TableCell
                 colSpan={7}
                 className="text-center h-24 text-muted-foreground"
               >
-                NO DATA AVAILABLE
+                {noResults ? "NO MATCHING SITES" : "NO DATA AVAILABLE"}
               </TableCell>
             </TableRow>
           )}

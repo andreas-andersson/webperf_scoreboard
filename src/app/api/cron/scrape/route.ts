@@ -1,23 +1,21 @@
-import { NextResponse } from 'next/server';
-import { connection } from 'next/server';
-import { db } from '@/db';
-import { sites, scans } from '@/db/schema';
+import { NextResponse, connection } from 'next/server';
 import { scrapeScoreboard, scrapeSiteDetails } from '@/lib/scraper';
-import { eq } from 'drizzle-orm';
+import { upsertSite, createScan } from '@/lib/site.service';
 
 export const maxDuration = 300; // Allow 5 minutes for scraping if there are many sites
 
 export async function GET(request: Request) {
+    // Basic auth check for cron (optional but recommended)
+    const authHeader = request.headers.get('authorization');
+    if (
+        process.env.NODE_ENV !== 'development' &&
+        authHeader !== `Bearer ${process.env.CRON_SECRET}`
+    ) {
+        return new NextResponse('Unauthorized', { status: 401 });
+    }
+
     await connection();
     try {
-        // Basic auth check for cron (optional but recommended)
-        const authHeader = request.headers.get('authorization');
-        if (
-            process.env.NODE_ENV !== 'development' && 
-            authHeader !== `Bearer ${process.env.CRON_SECRET}`
-        ) {
-            return new NextResponse('Unauthorized', { status: 401 });
-        }
 
         console.log('Starting scheduled scrape...');
         const scrapedSites = await scrapeScoreboard();
@@ -32,8 +30,7 @@ export async function GET(request: Request) {
                 const details = await scrapeSiteDetails(siteData.detailsUrl);
                 categories = details.categories;
                 testsData = details.testsData;
-                const url = details.url;
-                siteData.url = url;
+                siteData.url = details.url;
             } catch (e) {
                 console.error(`Failed to scrape details for ${siteData.name}`, e);
 
@@ -41,27 +38,9 @@ export async function GET(request: Request) {
                 continue
             }
 
-            let siteId: string;
             const urlWithoutProtocol = siteData.url.replace(/^https?:\/\//, '');
-            const existingSite = await db.select().from(sites).where(eq(sites.url, urlWithoutProtocol)).limit(1);
-
-            if (existingSite.length > 0) {
-                siteId = existingSite[0].id;
-            } else {
-                const insertResult = await db.insert(sites).values({
-                    url: urlWithoutProtocol || '',
-                    name: siteData.name,
-                }).returning({ id: sites.id });
-                siteId = insertResult[0].id;
-            }
-
-            // 3. Create Scan Record
-            await db.insert(scans).values({
-                siteId: siteId,
-                totalScore: siteData.totalScore,
-                categories: categories,
-                testsData: testsData,
-            });
+            const siteId = await upsertSite(urlWithoutProtocol, siteData.name);
+            await createScan({ siteId, totalScore: siteData.totalScore, categories, testsData });
         }
 
         return NextResponse.json({ success: true, sitesProcessed: scrapedSites.length });

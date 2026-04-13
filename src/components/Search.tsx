@@ -7,38 +7,29 @@ import { Kbd } from "./ui/kbd";
 
 interface SearchProps {
   tableBodyRef?: RefObject<HTMLTableSectionElement | null>;
+  onResultsChange?: (hasResults: boolean) => void;
 }
 
-export function Search({ tableBodyRef }: SearchProps) {
+export function Search({ tableBodyRef, onResultsChange }: SearchProps) {
 
   const searchRef = useRef<HTMLInputElement>(null);
 
-  /**
-   * Handle filtering table rows based on search input
-   * @param e Change event from the search input
-   * @returns void
-   */
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
     if (!tableBodyRef?.current) return;
 
+    let visibleCount = 0;
     const rows = tableBodyRef.current.rows;
     for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const text = row.textContent?.toLowerCase() || "";
-        if (text.includes(term)) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
+      const row = rows[i];
+      const text = row.textContent?.toLowerCase() || "";
+      const visible = text.includes(term);
+      row.style.display = visible ? "" : "none";
+      if (visible) visibleCount++;
     }
+    onResultsChange?.(visibleCount > 0);
   }
 
-  /**
-   * Handle keydown events for focusing and blurring the search input
-   * @param e Keyboard event
-   * @returns void
-   */
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "/" && !e.repeat) {
       e.preventDefault();
@@ -50,18 +41,24 @@ export function Search({ tableBodyRef }: SearchProps) {
     }
   }
 
-  // Set up keydown event listener
   useEffect(() => {
-    // Focus search input on "/" key press
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (
     <InputGroup className="mb-4 w-full border-none">
-      <InputGroupInput ref={searchRef} type="search" placeholder="Search..." onChange={handleSearch} />
+      <label htmlFor="leaderboard-search" className="sr-only">Search sites</label>
+      <InputGroupInput
+        id="leaderboard-search"
+        ref={searchRef}
+        type="search"
+        placeholder="Search..."
+        onChange={handleSearch}
+        aria-controls="leaderboard-table-body"
+      />
       <InputGroupAddon>
-      <SearchIcon />
+        <SearchIcon aria-hidden="true" />
       </InputGroupAddon>
       <InputGroupAddon align="inline-end">
         <Kbd>/</Kbd>
