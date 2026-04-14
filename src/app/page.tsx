@@ -3,18 +3,7 @@ import { connection } from "next/server";
 import { ArrowUpRight } from "lucide-react";
 import { LeaderboardLoader } from "@/components/LeaderboardLoader";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-
-function LeaderboardSkeleton() {
-  return (
-    <div className="space-y-2 pt-2">
-      <Skeleton className="h-8 w-48 mb-4" />
-      {Array.from({ length: 10 }).map((_, i) => (
-        <Skeleton key={i} className="h-6 w-full" />
-      ))}
-    </div>
-  );
-}
+import { LeaderboardSkeleton } from "./parts/skeleton";
 
 async function DynamicLeaderboard() {
   await connection();
