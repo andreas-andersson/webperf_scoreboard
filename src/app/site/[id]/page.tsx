@@ -7,11 +7,11 @@ import { ScanHistoryTable } from "@/components/ScanHistoryTable";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { getSiteWithHistory } from "@/lib/site.service";
 import { cacheLife } from "next/cache";
-import PageSkeleton from "./components/skeleton";
+import PageSkeleton from "./parts/skeleton";
 
 async function getSiteData(id: string) {
   "use cache";
-  cacheLife("hours");
+  cacheLife("days");
   return getSiteWithHistory(id);
 }
 

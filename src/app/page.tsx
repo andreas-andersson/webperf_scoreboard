@@ -1,14 +1,8 @@
 import { Suspense } from "react";
-import { connection } from "next/server";
 import { ArrowUpRight } from "lucide-react";
 import { LeaderboardLoader } from "@/components/LeaderboardLoader";
 import { Card, CardContent } from "@/components/ui/card";
 import { LeaderboardSkeleton } from "./parts/skeleton";
-
-async function DynamicLeaderboard() {
-  await connection();
-  return <LeaderboardLoader />;
-}
 
 export default function Home() {
   return (
@@ -37,7 +31,7 @@ export default function Home() {
       <Card className="border-border">
         <CardContent>
           <Suspense fallback={<LeaderboardSkeleton />}>
-            <DynamicLeaderboard />
+            <LeaderboardLoader />
           </Suspense>
         </CardContent>
       </Card>

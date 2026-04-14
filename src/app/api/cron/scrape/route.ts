@@ -1,4 +1,4 @@
-import { NextResponse, connection } from 'next/server';
+import { NextResponse } from 'next/server';
 import { scrapeScoreboard, scrapeSiteDetails } from '@/lib/scraper';
 import { upsertSite, createScan } from '@/lib/site.service';
 
@@ -14,7 +14,6 @@ export async function GET(request: Request) {
         return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    await connection();
     try {
 
         console.log('Starting scheduled scrape...');

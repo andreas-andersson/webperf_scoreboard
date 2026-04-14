@@ -8,18 +8,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev       # Start development server
 npm run build     # Production build
 npm run lint      # Run ESLint
-npx drizzle-kit generate   # Generate DB migrations
-npx drizzle-kit migrate    # Apply DB migrations
-npx drizzle-kit studio     # Open Drizzle Studio (DB browser)
 ```
+
+## Database Migrations
+
+SQL migration files live in `supabase/migrations/`. Run them in order in the Supabase SQL editor.
+
+| File | Description |
+|------|-------------|
+| `001_initial_schema.sql` | Create `sites` and `scans` tables |
+| `002_get_leaderboard_function.sql` | `get_leaderboard()` stored proc (used via RPC) |
+| `003_sites_url_unique_constraint.sql` | Unique constraint on `sites.url` (required for upsert) |
+| `004_scans_scanned_at_default.sql` | `scanned_at` NOT NULL + DEFAULT now() |
+| `005_enforce_sites_constraints.sql` | NOT NULL + defaults on all `sites` columns |
+| `006_enforce_scans_constraints.sql` | NOT NULL + defaults on all `scans` columns |
 
 ## Environment Variables
 
 Required in `.env.local`:
 ```
-DB_CONNECTION_STRING='postgresql://'
-DB_CONNECTION_READ1=''
-DB_CONNECTION_READ2=''
+NEXT_PUBLIC_SUPABASE_URL=''
+NEXT_PUBLIC_SUPABASE_ANON_KEY=''
+SUPABASE_SERVICE_ROLE_KEY=''
 TARGET_BOARD_URL=''
 ```
 
@@ -37,8 +47,8 @@ TARGET_BOARD_URL=''
 
 ### Key Files
 
-- [src/db/schema.ts](src/db/schema.ts) — Two tables: `sites` (UUID, url, name) and `scans` (siteId FK, totalScore, categories JSONB, testsData JSONB, scannedAt)
-- [src/db/index.ts](src/db/index.ts) — Drizzle ORM with 1 primary + 2 read replicas; `useReplica()` returns a random replica
+- [src/lib/supabase.ts](src/lib/supabase.ts) — Supabase admin client (service role, bypasses RLS)
+- [src/lib/site.service.ts](src/lib/site.service.ts) — DB operations: leaderboard RPC, site upsert, scan insert, site history
 - [src/lib/scraper.ts](src/lib/scraper.ts) — Cheerio-based scraper; CSS selectors here are the main customization point when the target site changes
 - [src/lib/ratingColors.ts](src/lib/ratingColors.ts) — Score → Tailwind color mapping (Catppuccin palette); thresholds: ≥4.0 green, 2.5–4.0 peach, <2.5 red
 - [src/components/Leaderboard.tsx](src/components/Leaderboard.tsx) — Client component; integrates `Search` for real-time row filtering
@@ -46,7 +56,7 @@ TARGET_BOARD_URL=''
 
 ### Patterns
 
-- Pages use `export const dynamic = "force-dynamic"` to avoid static caching of DB data
 - UI primitives are shadcn/ui components (New York style) in [src/components/ui/](src/components/ui/)
 - Path alias `@/*` maps to `src/*`
 - Scores are stored and displayed as floats (0–5 scale); `scoreTextToFloat()` in [src/lib/utils.ts](src/lib/utils.ts) parses strings like `"(3.33 av 5)"`
+- Leaderboard uses `"use cache"` + `cacheLife("hours")` — Next.js caches and revalidates hourly

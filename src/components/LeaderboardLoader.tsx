@@ -4,7 +4,7 @@ import { cacheLife } from "next/cache";
 
 export async function LeaderboardLoader() {
   "use cache";
-  cacheLife("hours");
+  cacheLife("days");
 
   const leaderboard = await getLeaderboard();
   return <Leaderboard leaderboard={leaderboard} />;
