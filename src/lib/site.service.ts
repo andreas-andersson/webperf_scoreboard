@@ -18,7 +18,7 @@ export async function getLeaderboard() {
   }));
 }
 
-export async function getSiteWithHistory(id: string, limit = 52) {
+export async function getSiteWithHistory(id: string, limit = 25) {
   const [{ data: site }, { data: history }] = await Promise.all([
     supabaseAdmin.from('sites').select('*').eq('id', id).single(),
     supabaseAdmin
