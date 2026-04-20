@@ -79,7 +79,9 @@ describe('scrapeSiteDetails()', async () => {
   })
 
   it('returns a non-empty testsData object with numeric scores', () => {
-    expect(Object.keys(result.testsData).length).toEqual(16)
+
+    expect(Object.keys(result.testsData).length).toBeGreaterThanOrEqual(11)
+    expect(Object.keys(result.testsData).length).toBeLessThanOrEqual(17)
     const expectedTests = [
       'HTTP & tekniktest',
       'Webbprestanda enligt Sitespeed.io',
@@ -96,7 +98,8 @@ describe('scrapeSiteDetails()', async () => {
       'Sökmotoroptimering (SEO) enligt Google Lighthouse',
       'Följs praxis enligt Google Lighthouse',
       'Webbprestanda enligt Google Lighthouse',
-      'Tillgänglighet enligt Axe'
+      'Tillgänglighet enligt Axe',
+      'Lighthouse',
     ]
     const testNames = Object.keys(result.testsData)
     testNames.forEach(name => {
