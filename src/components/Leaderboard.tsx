@@ -62,8 +62,8 @@ export function Leaderboard({ leaderboard }: LeaderboardProps) {
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-muted/50 border-border">
-            <TableHead className="w-[80px]">RANK</TableHead>
-            <TableHead className="w-[80px] hidden sm:table-cell">TREND</TableHead>
+            <TableHead className="w-10">RANK</TableHead>
+            <TableHead className="w-10 hidden sm:table-cell">TREND</TableHead>
             <TableHead>SITE NAME</TableHead>
             <TableHead className="hidden md:table-cell">URL</TableHead>
             <TableHead className="text-right">SCORE</TableHead>
