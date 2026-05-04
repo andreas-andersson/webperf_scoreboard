@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { scrapeScoreboard, scrapeSiteDetails } from '@/lib/scraper';
 import { upsertSite, createScan } from '@/lib/site.service';
 
@@ -41,6 +42,9 @@ export async function GET(request: Request) {
             const siteId = await upsertSite(urlWithoutProtocol, siteData.name);
             await createScan({ siteId, totalScore: siteData.totalScore, categories, testsData });
         }
+
+        revalidateTag('leaderboard');
+        revalidateTag('site');
 
         return NextResponse.json({ success: true, sitesProcessed: scrapedSites.length });
     } catch (error) {

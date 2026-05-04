@@ -1,10 +1,19 @@
-import { Suspense } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { LeaderboardLoader } from "@/components/LeaderboardLoader";
+import { Leaderboard } from "@/components/Leaderboard";
 import { Card, CardContent } from "@/components/ui/card";
-import { LeaderboardSkeleton } from "./parts/skeleton";
+import { getLeaderboard } from "@/lib/site.service";
+import { cacheLife, cacheTag } from "next/cache";
 
-export default function Home() {
+async function getCachedLeaderboard() {
+  "use cache";
+  cacheLife("days");
+  cacheTag("leaderboard");
+  return getLeaderboard();
+}
+
+export default async function Home() {
+  const leaderboard = await getCachedLeaderboard();
+
   return (
     <main className="container mx-auto py-10 px-4">
       <div className="flex flex-col sm:flex-row sm:items-end mb-6 gap-4">
@@ -30,9 +39,7 @@ export default function Home() {
       </div>
       <Card className="border-border">
         <CardContent>
-          <Suspense fallback={<LeaderboardSkeleton />}>
-            <LeaderboardLoader />
-          </Suspense>
+          <Leaderboard leaderboard={leaderboard} />
         </CardContent>
       </Card>
     </main>
