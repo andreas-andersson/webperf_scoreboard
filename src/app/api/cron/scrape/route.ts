@@ -43,8 +43,8 @@ export async function GET(request: Request) {
             await createScan({ siteId, totalScore: siteData.totalScore, categories, testsData });
         }
 
-        revalidateTag('leaderboard');
-        revalidateTag('site');
+        revalidateTag('leaderboard', { expire: 0 });
+        revalidateTag('site', { expire: 0 });
 
         return NextResponse.json({ success: true, sitesProcessed: scrapedSites.length });
     } catch (error) {
