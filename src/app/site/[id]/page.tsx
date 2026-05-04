@@ -7,21 +7,16 @@ import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { getSiteWithHistory } from "@/lib/site.service";
 import { cacheLife, cacheTag } from "next/cache";
 
-async function getSiteData(id: string) {
-  "use cache";
-  cacheLife("days");
-  cacheTag("site", `site:${id}`);
-  return getSiteWithHistory(id);
-}
 
 export default async function SiteDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  "use cache";
   const { id } = await params;
-  const { site, history } = await getSiteData(id);
+  cacheLife("days");
+  cacheTag("site", `site:${id}`);
 
-  if (!site) notFound();
+  const { site, history } = await getSiteWithHistory(id);
 
-  // TODO: Render a no scan history state instead of 404
-  if (history.length === 0) notFound();
+  if (!site || !history || history.length === 0) notFound();
 
   const currentScore = history[0];
   const categoriesCurrent = currentScore.categories as Record<string, number>;
