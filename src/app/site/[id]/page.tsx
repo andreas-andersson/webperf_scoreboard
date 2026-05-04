@@ -7,12 +7,16 @@ import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { getSiteWithHistory } from "@/lib/site.service";
 import { cacheLife, cacheTag } from "next/cache";
 
-export default async function SiteDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+async function getSiteData(id: string) {
   "use cache";
-  const { id } = await params;
   cacheLife("days");
   cacheTag("site", `site:${id}`);
-  const { site, history } = await getSiteWithHistory(id);
+  return getSiteWithHistory(id);
+}
+
+export default async function SiteDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const { site, history } = await getSiteData(id);
 
   if (!site) notFound();
 
