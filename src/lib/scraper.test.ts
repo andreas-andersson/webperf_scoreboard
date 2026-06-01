@@ -81,26 +81,28 @@ describe('scrapeSiteDetails()', async () => {
   it('returns a non-empty testsData object with numeric scores', () => {
 
     expect(Object.keys(result.testsData).length).toBeGreaterThanOrEqual(11)
-    expect(Object.keys(result.testsData).length).toBeLessThanOrEqual(17)
+    expect(Object.keys(result.testsData).length).toBeLessThanOrEqual(18)
     const expectedTests = [
+      'Tillgänglighetsredogörelse',
       'HTTP & tekniktest',
+      'Lighthouse',
+      'Tillgänglighet enligt Axe',
+      'HTML',
+      'Sökmotoroptimering (SEO) enligt Google Lighthouse',
+      'Webbprestanda enligt Google Lighthouse',
       'Webbprestanda enligt Sitespeed.io',
+      'Följs praxis enligt Google Lighthouse',
+      'Spårning och integritet',
+      'CSS',
       'Mjukvara',
       'E-post',
-      'Spårning och integritet',
+      'Integritetstest med Webbkoll',
       'HTTP statuskod 404',
       'Energieffektivitet',
-      'Standardfiler',
       'Tillgänglighet enligt Pa11y',
-      'HTML',
-      'CSS',
-      'Integritetstest med Webbkoll',
-      'Sökmotoroptimering (SEO) enligt Google Lighthouse',
-      'Följs praxis enligt Google Lighthouse',
-      'Webbprestanda enligt Google Lighthouse',
-      'Tillgänglighet enligt Axe',
-      'Lighthouse',
+      'Standardfiler',
     ]
+
     const testNames = Object.keys(result.testsData)
     testNames.forEach(name => {
       // console.log(name);
