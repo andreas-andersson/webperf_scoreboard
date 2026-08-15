@@ -1,20 +1,32 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ScoreCard } from "@/components/ScoreCard";
 import { TestResultsCard } from "@/components/TestResultsCard";
 import { ScanHistoryTable } from "@/components/ScanHistoryTable";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getSiteWithHistory } from "@/lib/site.service";
 import { cacheLife, cacheTag } from "next/cache";
 
-
-export default async function SiteDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+async function getCachedSiteWithHistory(id: string) {
   "use cache";
-  const { id } = await params;
   cacheLife("days");
   cacheTag("site", `site:${id}`);
+  return getSiteWithHistory(id);
+}
 
-  const { site, history } = await getSiteWithHistory(id);
+export default function SiteDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense fallback={<SiteDetailsSkeleton />}>
+      <SiteDetails params={params} />
+    </Suspense>
+  );
+}
+
+async function SiteDetails({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const { site, history } = await getCachedSiteWithHistory(id);
 
   if (!site || !history || history.length === 0) notFound();
 
@@ -87,6 +99,30 @@ export default async function SiteDetailsPage({ params }: { params: Promise<{ id
       />
 
       <ScanHistoryTable history={history} />
+    </div>
+  );
+}
+
+function SiteDetailsSkeleton() {
+  return (
+    <div className="container mx-auto py-10 px-4 space-y-8">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-9 w-64" />
+          <Skeleton className="h-4 w-40" />
+        </div>
+        <Skeleton className="h-10 w-32" />
+      </div>
+
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-24" />
+        ))}
+      </div>
+
+      <Skeleton className="h-48 w-full" />
+      <Skeleton className="h-96 w-full" />
+      <Skeleton className="h-64 w-full" />
     </div>
   );
 }
