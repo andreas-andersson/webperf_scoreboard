@@ -12,25 +12,22 @@ npm run lint      # Run ESLint
 
 ## Database Migrations
 
-SQL migration files live in `supabase/migrations/`. Run them in order in the Supabase SQL editor.
+SQL migration files live in `supabase/migrations/` (name kept for history — target DB is now plain Postgres, not Supabase). Run them in order against `DATABASE_URL`.
 
 | File | Description |
 |------|-------------|
 | `001_initial_schema.sql` | Create `sites` and `scans` tables |
-| `002_get_leaderboard_function.sql` | `get_leaderboard()` stored proc (used via RPC) |
-| `003_sites_url_unique_constraint.sql` | Unique constraint on `sites.url` (required for upsert) |
-| `004_scans_scanned_at_default.sql` | `scanned_at` NOT NULL + DEFAULT now() |
-| `005_enforce_sites_constraints.sql` | NOT NULL + defaults on all `sites` columns |
-| `006_enforce_scans_constraints.sql` | NOT NULL + defaults on all `scans` columns |
+| `002_get_leaderboard_function.sql` | `get_leaderboard()` stored proc (called via plain SQL: `SELECT * FROM get_leaderboard()`) |
+
+> Migrations `003`–`006` (unique constraint on `sites.url`, `scanned_at` default, NOT NULL/defaults on both tables) were applied directly against the old Supabase instance and never saved as files here. Reconstruct them from `001`/`002` plus this history before standing up a fresh database — data migration and schema parity are not done yet.
 
 ## Environment Variables
 
 Required in `.env.local`:
 ```
-NEXT_PUBLIC_SUPABASE_URL=''
-NEXT_PUBLIC_SUPABASE_ANON_KEY=''
-SUPABASE_SERVICE_ROLE_KEY=''
 TARGET_BOARD_URL=''
+DATABASE_URL=''
+CRON_SECRET=''
 ```
 
 ## Architecture
@@ -47,7 +44,7 @@ TARGET_BOARD_URL=''
 
 ### Key Files
 
-- [src/lib/supabase.ts](src/lib/supabase.ts) — Supabase admin client (service role, bypasses RLS)
+- [src/lib/db.ts](src/lib/db.ts) — `pg` connection pool (reused across invocations)
 - [src/lib/site.service.ts](src/lib/site.service.ts) — DB operations: leaderboard RPC, site upsert, scan insert, site history
 - [src/lib/scraper.ts](src/lib/scraper.ts) — Cheerio-based scraper; CSS selectors here are the main customization point when the target site changes
 - [src/lib/ratingColors.ts](src/lib/ratingColors.ts) — Score → Tailwind color mapping (Catppuccin palette); thresholds: ≥4.0 green, 2.5–4.0 peach, <2.5 red

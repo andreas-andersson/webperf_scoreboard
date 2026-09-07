@@ -1,11 +1,9 @@
-import { supabaseAdmin } from './supabase';
+import { pool } from './db';
 
 export async function getLeaderboard() {
-  const { data, error } = await supabaseAdmin.rpc('get_leaderboard');
+  const { rows } = await pool.query('SELECT * FROM get_leaderboard()');
 
-  if (error) throw new Error(`getLeaderboard failed: ${error.message}`);
-
-  return (data as Array<Record<string, unknown>>).map((row) => ({
+  return rows.map((row) => ({
     id: row.id as string,
     name: row.name as string,
     url: row.url as string,
@@ -19,15 +17,14 @@ export async function getLeaderboard() {
 }
 
 export async function getSiteWithHistory(id: string, limit = 25) {
-  const [{ data: site }, { data: history }] = await Promise.all([
-    supabaseAdmin.from('sites').select('*').eq('id', id).single(),
-    supabaseAdmin
-      .from('scans')
-      .select('*')
-      .eq('site_id', id)
-      .order('scanned_at', { ascending: false })
-      .limit(limit),
+  const [{ rows: siteRows }, { rows: history }] = await Promise.all([
+    pool.query('SELECT * FROM sites WHERE id = $1', [id]),
+    pool.query(
+      'SELECT * FROM scans WHERE site_id = $1 ORDER BY scanned_at DESC LIMIT $2',
+      [id, limit],
+    ),
   ]);
+  const site = siteRows[0];
 
   return {
     site: site
@@ -38,7 +35,7 @@ export async function getSiteWithHistory(id: string, limit = 25) {
           createdAt: site.created_at as string,
         }
       : null,
-    history: (history ?? []).map((scan: Record<string, unknown>) => ({
+    history: history.map((scan) => ({
       id: scan.id as string,
       siteId: scan.site_id as string,
       scannedAt: new Date(scan.scanned_at as string),
@@ -51,14 +48,14 @@ export async function getSiteWithHistory(id: string, limit = 25) {
 }
 
 export async function upsertSite(url: string, name: string): Promise<string> {
-  const { data, error } = await supabaseAdmin
-    .from('sites')
-    .upsert({ url, name }, { onConflict: 'url' })
-    .select('id')
-    .single();
-
-  if (error) throw new Error(`upsertSite failed: ${error.message}`);
-  return data.id as string;
+  const { rows } = await pool.query(
+    `INSERT INTO sites (url, name)
+     VALUES ($1, $2)
+     ON CONFLICT (url) DO UPDATE SET name = EXCLUDED.name
+     RETURNING id`,
+    [url, name],
+  );
+  return rows[0].id as string;
 }
 
 export async function createScan(params: {
@@ -67,13 +64,15 @@ export async function createScan(params: {
   categories: Record<string, number>;
   testsData: Record<string, number>;
 }) {
-  const { error } = await supabaseAdmin.from('scans').insert({
-    site_id: params.siteId,
-    total_score: params.totalScore,
-    categories: params.categories,
-    tests_data: params.testsData,
-    scanned_at: new Date().toISOString(),
-  });
-
-  if (error) throw new Error(`createScan failed: ${error.message}`);
+  await pool.query(
+    `INSERT INTO scans (site_id, total_score, categories, tests_data, scanned_at)
+     VALUES ($1, $2, $3, $4, $5)`,
+    [
+      params.siteId,
+      params.totalScore,
+      JSON.stringify(params.categories),
+      JSON.stringify(params.testsData),
+      new Date().toISOString(),
+    ],
+  );
 }
