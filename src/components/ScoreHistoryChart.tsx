@@ -124,7 +124,7 @@ export function ScoreHistoryChart({
         </Select>
       </CardHeader>
       <CardContent className="h-[400px]">
-        <ResponsiveContainer>
+        <ResponsiveContainer initialDimension={{ width: 1000, height: 400 }}>
           <LineChart data={data} width={1000} height={400}>
             <ScoreGradientDef />
             <CartesianGrid strokeDasharray="2 2" />
