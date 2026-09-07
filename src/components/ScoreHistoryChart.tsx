@@ -154,8 +154,8 @@ export function ScoreHistoryChart({
                 color: "#cdd6f4",
                 borderRadius: "8px",
               }}
-              formatter={(value: number | undefined) => [
-                value?.toFixed(2) ?? "",
+              formatter={(value) => [
+                typeof value === "number" ? value.toFixed(2) : "",
                 label,
               ]}
             />
