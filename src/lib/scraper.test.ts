@@ -97,6 +97,7 @@ describe('scrapeSiteDetails()', async () => {
       'Mjukvara',
       'E-post',
       'Integritetstest (Webbkoll)',
+      'Integritetstest med Webbkoll',
       'HTTP statuskod 404',
       'Energieffektivitet',
       'Tillgänglighet enligt Pa11y',
@@ -105,6 +106,7 @@ describe('scrapeSiteDetails()', async () => {
 
     const testNames = Object.keys(result.testsData)
     testNames.forEach(name => {
+      console.log(name);
       expect( expectedTests.includes(name)).toBe(true)
     })
 
