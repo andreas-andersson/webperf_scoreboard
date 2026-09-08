@@ -26,12 +26,11 @@ export default function SiteDetailsPage({ params }: { params: Promise<{ id: stri
 
 async function SiteDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { site, history } = await getCachedSiteWithHistory(id);
+  const { site, current, history } = await getCachedSiteWithHistory(id);
 
   if (!site || !history || history.length === 0) notFound();
 
-  const currentScore = history[0];
-  const categoriesCurrent = currentScore.categories as Record<string, number>;
+  const categoriesCurrent = current.categories;
   const allCategories = new Set<string>();
   const allTestsKeys = new Set<string>();
 
@@ -82,15 +81,13 @@ async function SiteDetails({ params }: { params: Promise<{ id: string }> }) {
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
-        <ScoreCard label="Total" score={currentScore.totalScore} />
+        <ScoreCard label="Total" score={current.totalScore} />
         {Object.entries(categoriesCurrent).map(([name, score]) => (
           <ScoreCard key={name} label={name} score={score} />
         ))}
       </div>
 
-      <TestResultsCard
-        testsData={(currentScore.testsData as Record<string, unknown>) || {}}
-      />
+      <TestResultsCard testsData={current.testsData} />
 
       <ScoreHistoryChart
         data={chartData}

@@ -10,6 +10,19 @@ interface ScrapedSite {
   testsData?: Record<string, number>;
 }
 
+interface ScrapedTest {
+  name: string;
+  score: number;
+  testedAt: string; // YYYY-MM-DD, per the source's own observation date
+}
+
+interface JsonLdWebPage {
+  mainEntity?: {
+    dateModified?: string;
+    variableMeasured?: { name: string; value: number; observationDate: string }[];
+  };
+}
+
 // TODO: Replace with the actual URL of the scoreboard you want to scrape
 const TARGET_BOARD_URL = process.env.TARGET_BOARD_URL || ''; 
 
@@ -74,15 +87,29 @@ export async function scrapeSiteDetails(detailsUrl: string) {
     }
 
     /**
-     * Find individual test results
+     * Find individual test results + their per-test observation date via the
+     * page's JSON-LD (schema.org Dataset). More reliable than scraping the
+     * nav-toc, and it's the only place a per-test date is exposed.
      */
-    $('main#main-content nav.nav-toc ol li').each((_, element) => {
-        const testName = $(element).find('a').text().trim();
-        const testResultText = $(element).find('small').text().trim();
-        const testResult = scoreTextToFloat(testResultText);
+    const tests: ScrapedTest[] = [];
+    let dateModified: string | undefined;
 
-        testsData[testName] = testResult;
+    $('script[type="application/ld+json"]').each((_, el) => {
+        let parsed: JsonLdWebPage;
+        try {
+            parsed = JSON.parse($(el).contents().text());
+        } catch {
+            return;
+        }
+        const variableMeasured = parsed.mainEntity?.variableMeasured;
+        if (!variableMeasured) return;
+
+        dateModified = parsed.mainEntity?.dateModified;
+        for (const { name, value, observationDate } of variableMeasured) {
+            testsData[name] = value;
+            tests.push({ name, score: value, testedAt: observationDate.split('T')[0] });
+        }
     });
 
-    return { categories, testsData, url };
+    return { categories, testsData, tests, dateModified, url };
 }

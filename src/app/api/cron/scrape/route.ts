@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 import { scrapeScoreboard, scrapeSiteDetails } from '@/lib/scraper';
-import { upsertSite, createScan } from '@/lib/site.service';
+import { upsertSite, upsertSiteScores, upsertSiteTests } from '@/lib/site.service';
 
 export const maxDuration = 300; // Allow 5 minutes for scraping if there are many sites
 
@@ -24,12 +24,14 @@ export async function GET(request: Request) {
         for (const siteData of scrapedSites) {
 
             let categories: Record<string, number> = {};
-            let testsData: Record<string, number> = {};
+            let tests: { name: string; score: number; testedAt: string }[] = [];
+            let dateModified: string | undefined;
 
             try {
                 const details = await scrapeSiteDetails(siteData.detailsUrl);
                 categories = details.categories;
-                testsData = details.testsData;
+                tests = details.tests;
+                dateModified = details.dateModified;
                 siteData.url = details.url;
             } catch (e) {
                 console.error(`Failed to scrape details for ${siteData.name}`, e);
@@ -40,7 +42,13 @@ export async function GET(request: Request) {
 
             const urlWithoutProtocol = siteData.url.replace(/^https?:\/\//, '');
             const siteId = await upsertSite(urlWithoutProtocol, siteData.name);
-            await createScan({ siteId, totalScore: siteData.totalScore, categories, testsData });
+
+            await upsertSiteScores(
+                siteId,
+                { Totalbetyg: siteData.totalScore, ...categories },
+                dateModified ? new Date(dateModified) : new Date(),
+            );
+            await upsertSiteTests(siteId, tests);
         }
 
         revalidateTag('leaderboard', { expire: 0 });
