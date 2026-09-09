@@ -25,11 +25,11 @@ export async function getSiteWithHistory(id: string, limit = 25) {
     await Promise.all([
       pool.query('SELECT * FROM sites WHERE id = $1', [id]),
       pool.query(
-        'SELECT metric_name, score, scraped_at FROM site_scores WHERE site_id = $1 ORDER BY scraped_at ASC',
+        'SELECT metric_name, score, scraped_at FROM site_scores WHERE site_id = $1 ORDER BY scraped_at ASC, created_at ASC',
         [id],
       ),
       pool.query(
-        'SELECT test_name, score, tested_at FROM site_tests WHERE site_id = $1 ORDER BY tested_at ASC',
+        'SELECT test_name, score, tested_at FROM site_tests WHERE site_id = $1 ORDER BY tested_at ASC, created_at ASC',
         [id],
       ),
       pool.query('SELECT metric_name, score FROM site_scores_current WHERE site_id = $1', [id]),
@@ -50,6 +50,10 @@ export async function getSiteWithHistory(id: string, limit = 25) {
   // Reconstruct one snapshot per distinct date anything changed, carrying
   // forward the last known value for whatever didn't change on that date --
   // there's no more single "scan" row, so this rebuilds the equivalent view.
+  // scraped_at/tested_at is the source's self-reported date, not our write
+  // order -- two rows can share it (source hasn't bumped its own date yet).
+  // The queries above tiebreak on created_at so same-date state overwrites
+  // land in true write order (same fix as leaderboard()/*_current, 009/010).
   type Event = { date: string; kind: 'score' | 'test'; key: string; value: number };
   const events: Event[] = [
     ...scoreRows.map((r) => ({
